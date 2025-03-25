@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Platinum Spices - Receipt Generator</title>
     <style>
-        /* Swiss Minimalist Design System */
         :root {
             --swiss-dark: #000;
             --swiss-light: #fff;
@@ -22,7 +21,6 @@
             line-height: 1.5;
         }
 
-        /* Navigation */
         .navbar {
             background-color: white;
             border-bottom: 1px solid var(--swiss-gray);
@@ -52,7 +50,6 @@
             font-size: 0.9em;
         }
 
-        /* Main Container */
         .container {
             max-width: 800px;
             margin: 30px auto;
@@ -60,7 +57,6 @@
             background-color: white;
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 15px;
         }
@@ -79,7 +75,6 @@
             font-family: inherit;
         }
 
-        /* Product Items */
         .category h2 {
             font-size: 1.3em;
             margin: 20px 0 10px 0;
@@ -105,7 +100,6 @@
             cursor: pointer;
         }
 
-        /* Buttons */
         .generate-btn, .update-btn, .save-btn {
             margin-top: 25px;
             padding: 10px;
@@ -118,18 +112,26 @@
             letter-spacing: 0.5px;
         }
 
-        /* Receipt Styles - Swiss Minimalist */
         .receipt-container {
             display: none;
             margin-top: 30px;
         }
 
+        #export-container {
+            width: 2in;
+            padding: 10px;
+            background: white;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
         .receipt {
-            padding: 20px;
+            width: calc(100% - 1px);
+            padding: 15px;
             background-color: white;
             border: 1px solid var(--swiss-dark);
-            margin-bottom: 20px;
-            width: 2in;
+            margin-bottom: 15px;
+            overflow: hidden;
         }
 
         .receipt h2 {
@@ -198,7 +200,6 @@
             line-height: 1.4;
         }
 
-        /* Pricing Page */
         .price-table {
             width: 100%;
             border-collapse: collapse;
@@ -219,13 +220,24 @@
             text-align: right;
         }
 
-        /* Page Management */
         .page {
             display: none;
         }
 
         .page.active {
             display: block;
+        }
+
+        .reset-container {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--swiss-gray);
+        }
+
+        .reset-input {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid var(--swiss-gray);
         }
     </style>
 </head>
@@ -446,53 +458,60 @@
 
             <!-- Receipt Container -->
             <div id="receipt-container" class="receipt-container">
-                <div id="receipt-original" class="receipt">
-                    <h2>PLATINUM SPICES</h2>
-                    <div class="business-info">
-                        <p>Lindapitiya Ranawatta Narammala</p>
-                        <p>+94 075 123 122 / +94 071 190 1973</p>
-                        <p id="receipt-date"></p>
+                <div id="export-container">
+                    <div id="receipt-original" class="receipt" style="margin-bottom:15px;">
+                        <h2>PLATINUM SPICES</h2>
+                        <div class="business-info">
+                            <p>Lindapitiya Ranawatta Narammala</p>
+                            <p>+94 075 123 122 / +94 071 190 1973</p>
+                            <p id="receipt-date"></p>
+                        </div>
+                        <div class="receipt-meta">
+                            <span id="receipt-number"></span>
+                        </div>
+                        <div class="customer-info">
+                            <p><strong>Customer:</strong> <span id="receipt-customer-name"></span></p>
+                            <p><strong>Address:</strong> <span id="receipt-customer-address"></span></p>
+                        </div>
+                        <div id="receipt-items" class="receipt-items"></div>
+                        <div class="total">Total: <span id="total-price">LKR 0</span></div>
+                        <div class="terms">
+                            <p>The buyer agrees to pay the full amount within 14 days if purchased on credit. Late payments will incur a 5% monthly interest charge.</p>
+                        </div>
+                        <div class="signature-area">
+                            <div class="signature">Sales Agent</div>
+                            <div class="signature">Buyer</div>
+                        </div>
                     </div>
-                    <div class="receipt-meta">
-                        <span id="receipt-number"></span>
-                    </div>
-                    <div class="customer-info">
-                        <p><strong>Customer:</strong> <span id="receipt-customer-name"></span></p>
-                        <p><strong>Address:</strong> <span id="receipt-customer-address"></span></p>
-                    </div>
-                    <div id="receipt-items" class="receipt-items"></div>
-                    <div class="total">Total: <span id="total-price">LKR 0</span></div>
-                    <div class="terms">
-                        <p>The buyer agrees to pay the full amount within 14 days if purchased on credit.</p>
-                    </div>
-                    <div class="signature-area">
-                        <div class="signature">Sales Agent</div>
-                        <div class="signature">Buyer</div>
-                    </div>
-                </div>
 
-                <div id="receipt-copy" class="receipt">
-                    <h2>PLATINUM SPICES</h2>
-                    <div class="business-info">
-                        <p>Lindapitiya Ranawatta Narammala</p>
-                        <p>+94 075 123 122 / +94 071 190 1973</p>
-                        <p id="receipt-date-copy"></p>
-                    </div>
-                    <div class="receipt-meta">
-                        <span id="receipt-number-copy"></span>
-                    </div>
-                    <div class="customer-info">
-                        <p><strong>Customer:</strong> <span id="receipt-customer-name-copy"></span></p>
-                        <p><strong>Address:</strong> <span id="receipt-customer-address-copy"></span></p>
-                    </div>
-                    <div id="receipt-items-copy" class="receipt-items"></div>
-                    <div class="total">Total: <span id="total-price-copy">LKR 0</span></div>
-                    <div class="terms">
-                        <p>The buyer agrees to pay the full amount within 14 days if purchased on credit. </p>
+                    <div id="receipt-copy" class="receipt">
+                        <h2>PLATINUM SPICES</h2>
+                        <div class="business-info">
+                            <p>Lindapitiya Ranawatta Narammala</p>
+                            <p>+94 075 123 122 / +94 071 190 1973</p>
+                            <p id="receipt-date-copy"></p>
+                        </div>
+                        <div class="receipt-meta">
+                            <span id="receipt-number-copy"></span>
+                        </div>
+                        <div class="customer-info">
+                            <p><strong>Customer:</strong> <span id="receipt-customer-name-copy"></span></p>
+                            <p><strong>Address:</strong> <span id="receipt-customer-address-copy"></span></p>
+                        </div>
+                        <div id="receipt-items-copy" class="receipt-items"></div>
+                        <div class="total">Total: <span id="total-price-copy">LKR 0</span></div>
+                        <div class="terms">
+                            <p>The buyer agrees to pay the full amount within 14 days if purchased on credit. Late payments will incur a 5% monthly interest charge.</p>
+                        </div>
                     </div>
                 </div>
 
                 <button class="save-btn" onclick="saveReceiptAsImage()">Save Receipt as Image</button>
+                
+                <div class="reset-container">
+                    <input type="password" id="reset-password" class="reset-input" placeholder="Enter password">
+                    <button class="save-btn" onclick="resetReceiptCounter()" style="margin-top:10px;background-color:#777;">Reset Counter</button>
+                </div>
             </div>
         </div>
     </div>
@@ -501,7 +520,6 @@
     <div id="pricing" class="page">
         <div class="container">
             <h1>Pricing Management</h1>
-            
             <table class="price-table">
                 <thead>
                     <tr>
@@ -601,17 +619,18 @@
                     </tr>
                 </tbody>
             </table>
-
             <button class="update-btn" onclick="updatePrices()">Update Prices</button>
         </div>
     </div>
 
-    <!-- html2canvas library for saving as image -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
     <script>
-        // Store item prices
-        let prices = {
+        // Initialize with localStorage persistence
+        let receiptCounter = localStorage.getItem('platinumReceiptCounter') ? 
+                            parseInt(localStorage.getItem('platinumReceiptCounter')) : 10;
+
+        // Load prices from localStorage or use defaults
+        let prices = JSON.parse(localStorage.getItem('platinumPrices')) || {
             turmeric50: 5,
             turmeric100: 8,
             turmeric500: 20,
@@ -634,9 +653,6 @@
             curry1kg: 40,
         };
 
-        // Receipt counter starting from 10
-        let receiptCounter = 10;
-
         // Page Navigation
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
@@ -644,7 +660,6 @@
             });
             document.getElementById(pageId).classList.add('active');
             
-            // Update nav link states
             document.querySelectorAll('.nav-links a').forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('onclick').includes(pageId)) {
@@ -656,15 +671,12 @@
         // Update displayed prices
         function updateDisplayedPrices() {
             for (const [id, price] of Object.entries(prices)) {
-                const elements = document.querySelectorAll(`.price-display[data-id="${id}"]`);
-                elements.forEach(el => {
+                document.querySelectorAll(`.price-display[data-id="${id}"]`).forEach(el => {
                     el.textContent = `LKR ${price}`;
                 });
                 
                 const input = document.getElementById(`edit-${id}`);
-                if (input) {
-                    input.value = price;
-                }
+                if (input) input.value = price;
             }
         }
 
@@ -672,32 +684,37 @@
         function updatePrices() {
             for (const id in prices) {
                 const input = document.getElementById(`edit-${id}`);
-                if (input) {
-                    prices[id] = Number(input.value);
-                }
+                if (input) prices[id] = Number(input.value);
             }
+            // Save to localStorage
+            localStorage.setItem('platinumPrices', JSON.stringify(prices));
             updateDisplayedPrices();
-            alert('Prices updated successfully!');
+            alert('Prices updated and saved successfully!');
         }
 
         // Format date for receipt
         function formatDate(date) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            const options = { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
             return date.toLocaleDateString('en-US', options);
         }
 
         // Receipt Generator Functions
         function changeCount(item, change) {
             const countElement = document.getElementById(`${item}-count`);
-            let currentCount = parseInt(countElement.textContent);
-            currentCount += change;
-            if (currentCount < 0) currentCount = 0;
+            let currentCount = parseInt(countElement.textContent) || 0;
+            currentCount = Math.max(0, currentCount + change);
             countElement.textContent = currentCount;
         }
 
         function generateReceipt() {
-            const customerName = document.getElementById('customer-name').value;
-            const customerAddress = document.getElementById('customer-address').value;
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerAddress = document.getElementById('customer-address').value.trim();
             
             if (!customerName || !customerAddress) {
                 alert('Please enter customer name and address');
@@ -707,105 +724,77 @@
             let total = 0;
             let receiptContent = '';
             
-            for (let item in prices) {
-                const count = parseInt(document.getElementById(`${item}-count`).textContent);
+            for (const [item, price] of Object.entries(prices)) {
+                const count = parseInt(document.getElementById(`${item}-count`).textContent) || 0;
                 if (count > 0) {
-                    const itemPrice = prices[item];
-                    total += itemPrice * count;
+                    const subtotal = price * count;
+                    total += subtotal;
                     
-                    // Format the item name for display
-                    let displayName = item
-                        .replace(/([0-9])([a-z])/g, '$1 $2') // Add space between number and unit
-                        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-                        .replace(/^./, str => str.toUpperCase()); // Capitalize first letter
-                    
-                    receiptContent += `<p>${displayName}: LKR ${itemPrice} x ${count} = LKR ${(itemPrice * count).toFixed(2)}</p>`;
+                    receiptContent += `
+                        <p>
+                            ${formatItemName(item)}: 
+                            LKR ${price.toFixed(2)} × ${count} = LKR ${subtotal.toFixed(2)}
+                        </p>`;
                 }
             }
             
-            // Set receipt content
-            document.getElementById('receipt-items').innerHTML = receiptContent;
-            document.getElementById('receipt-items-copy').innerHTML = receiptContent;
-            
-            // Set customer info
-            document.getElementById('receipt-customer-name').textContent = customerName;
-            document.getElementById('receipt-customer-address').textContent = customerAddress;
-            document.getElementById('receipt-customer-name-copy').textContent = customerName;
-            document.getElementById('receipt-customer-address-copy').textContent = customerAddress;
-            
-            // Set totals
-            document.getElementById('total-price').textContent = `LKR ${total.toFixed(2)}`;
-            document.getElementById('total-price-copy').textContent = `LKR ${total.toFixed(2)}`;
-            
-            // Set date and receipt number
             const now = new Date();
-            document.getElementById('receipt-date').textContent = formatDate(now);
-            document.getElementById('receipt-date-copy').textContent = formatDate(now);
-            document.getElementById('receipt-number').textContent = `Receipt #${receiptCounter}`;
-            document.getElementById('receipt-number-copy').textContent = `Receipt #${receiptCounter}`;
             
-            // Increment receipt counter for next time
+            // Update both receipt copies
+            ['', '-copy'].forEach(suffix => {
+                document.getElementById(`receipt-items${suffix}`).innerHTML = receiptContent;
+                document.getElementById(`receipt-customer-name${suffix}`).textContent = customerName;
+                document.getElementById(`receipt-customer-address${suffix}`).textContent = customerAddress;
+                document.getElementById(`total-price${suffix}`).textContent = `LKR ${total.toFixed(2)}`;
+                document.getElementById(`receipt-date${suffix}`).textContent = formatDate(now);
+                document.getElementById(`receipt-number${suffix}`).textContent = `#${receiptCounter}`;
+            });
+
+            // Increment and persist receipt number
             receiptCounter++;
+            localStorage.setItem('platinumReceiptCounter', receiptCounter);
             
-            // Show receipt container
             document.getElementById('receipt-container').style.display = 'block';
         }
 
-        // Save receipt as image
+        function formatItemName(id) {
+            return id
+                .replace(/([0-9])([a-z])/g, '$1 $2')
+                .replace(/([A-Z])/g, ' $1')
+                .replace(/^./, str => str.toUpperCase());
+        }
+
         function saveReceiptAsImage() {
-            // Create a container for both receipts
-            const container = document.createElement('div');
-            container.style.width = '2in';
-            container.style.padding = '3px';
-            container.style.backgroundColor = 'white';
+            const container = document.getElementById('export-container');
             
-            // Clone the receipts
-            const original = document.getElementById('receipt-original').cloneNode(true);
-            const copy = document.getElementById('receipt-copy').cloneNode(true);
-            
-            // Add some spacing between receipts
-            copy.style.marginTop = '20px';
-            
-            // Add to container
-            container.appendChild(original);
-            container.appendChild(copy);
-            
-            // Temporarily add to body
-            document.body.appendChild(container);
-            
-            // Use html2canvas with precise dimensions
             html2canvas(container, {
-                width: 2 * 120, // 2 inches at 120 DPI
-                height: container.offsetHeight,
-                scale: 2, // Higher quality
+                width: 2*110, // 2 inches at 110 DPI
+                height: container.scrollHeight + 40,
+                scale: 2,
+                scrollY: 0,
                 logging: false,
-                useCORS: true,
-                allowTaint: true,
-                scrollX: 0,
-                scrollY: 0
+                useCORS: true
             }).then(canvas => {
-                // Convert canvas to image
-                const image = canvas.toDataURL('image/png');
-                
-                // Create temporary link
                 const link = document.createElement('a');
-                link.download = `platinum-spices-receipt-${receiptCounter-1}.png`;
-                link.href = image;
-                
-                // Trigger download
-                document.body.appendChild(link);
+                link.download = `platinum-receipt-${receiptCounter-1}.png`;
+                link.href = canvas.toDataURL('image/png');
                 link.click();
-                document.body.removeChild(link);
-                
-                // Remove temporary container
-                document.body.removeChild(container);
-            }).catch(err => {
-                console.error('Error generating image:', err);
-                document.body.removeChild(container);
             });
         }
 
-        // Initialize displayed prices
+        function resetReceiptCounter() {
+            const password = document.getElementById('reset-password').value;
+            if (password === '1111') {
+                receiptCounter = 10;
+                localStorage.setItem('platinumReceiptCounter', 10);
+                alert('Receipt counter reset to 10');
+                document.getElementById('reset-password').value = '';
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        // Initialize on load
         window.onload = function() {
             updateDisplayedPrices();
         };
