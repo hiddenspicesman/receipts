@@ -756,7 +756,7 @@
             // Create a container for both receipts
             const container = document.createElement('div');
             container.style.width = '2in';
-            container.style.padding = '10px';
+            container.style.padding = '3px';
             container.style.backgroundColor = 'white';
             
             // Clone the receipts
@@ -775,7 +775,7 @@
             
             // Use html2canvas with precise dimensions
             html2canvas(container, {
-                width: 2 * 120, // 2 inches at 96 DPI
+                width: 2 * 120, // 2 inches at 120 DPI
                 height: container.offsetHeight,
                 scale: 2, // Higher quality
                 logging: false,
