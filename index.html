@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platinum Spices - Receipt Generator</title>
+    <style>
+        /* Swiss Minimalist Design System */
+        :root {
+            --swiss-dark: #000;
+            --swiss-light: #fff;
+            --swiss-gray: #eee;
+            --swiss-text: #222;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--swiss-light);
+            color: var(--swiss-text);
+            line-height: 1.5;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: white;
+            border-bottom: 1px solid var(--swiss-gray);
+            padding: 12px 0;
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            font-weight: 500;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links a {
+            color: var(--swiss-text);
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 400;
+            font-size: 0.9em;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--swiss-gray);
+            font-family: inherit;
+        }
+
+        /* Product Items */
+        .category h2 {
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 6px;
+            border: 1px solid var(--swiss-gray);
+        }
+
+        .item button {
+            padding: 6px 10px;
+            font-size: 14px;
+            border: 1px solid var(--swiss-gray);
+            background-color: white;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .generate-btn, .update-btn, .save-btn {
+            margin-top: 25px;
+            padding: 10px;
+            background-color: var(--swiss-dark);
+            color: white;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        /* Receipt Styles - Swiss Minimalist */
+        .receipt-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .receipt {
+            padding: 20px;
+            background-color: white;
+            border: 1px solid var(--swiss-dark);
+            margin-bottom: 20px;
+            width: 2in;
+        }
+
+        .receipt h2 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .business-info {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 0.6em;
+            color: var(--swiss-text);
+            line-height: 1.3;
+        }
+
+        .receipt-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.6em;
+        }
+
+        .customer-info {
+            margin-bottom: 10px;
+            font-size: 0.7em;
+        }
+
+        .receipt-items {
+            margin: 15px 0;
+            font-size: 0.7em;
+        }
+
+        .receipt-items p {
+            margin: 4px 0;
+        }
+
+        .total {
+            font-weight: 500;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--swiss-dark);
+            font-size: 0.8em;
+        }
+
+        .signature-area {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature {
+            width: 45%;
+            border-top: 1px solid var(--swiss-dark);
+            padding-top: 5px;
+            font-size: 0.6em;
+            text-align: center;
+        }
+
+        .terms {
+            margin-top: 15px;
+            font-size: 0.55em;
+            line-height: 1.4;
+        }
+
+        /* Pricing Page */
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .price-table th, .price-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--swiss-gray);
+        }
+
+        .price-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid var(--swiss-gray);
+            text-align: right;
+        }
+
+        /* Page Management */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">PLATINUM SPICES</div>
+            <div class="nav-links">
+                <a href="#" class="active" onclick="showPage('generator')">Generator</a>
+                <a href="#" onclick="showPage('pricing')">Pricing</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Generator Page -->
+    <div id="generator" class="page active">
+        <div class="container">
+            <h1>Receipt Generator</h1>
+
+            <!-- Customer Information -->
+            <div class="form-group">
+                <label for="customer-name">Customer Name:</label>
+                <input type="text" id="customer-name" placeholder="Enter customer name">
+            </div>
+            <div class="form-group">
+                <label for="customer-address">Customer Address:</label>
+                <input type="text" id="customer-address" placeholder="Enter customer address">
+            </div>
+
+            <!-- Turmeric Category -->
+            <div class="category">
+                <h2>Turmeric</h2>
+                <div class="item">
+                    <span>Turmeric 50g (<span class="price-display" data-id="turmeric50">LKR 5</span>)</span>
+                    <div>
+                        <button onclick="changeCount('turmeric50', -1)">−</button>
+                        <span id="turmeric50-count">0</span>
+                        <button onclick="changeCount('turmeric50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Turmeric 100g (<span class="price-display" data-id="turmeric100">LKR 8</span>)</span>
+                    <div>
+                        <button onclick="changeCount('turmeric100', -1)">−</button>
+                        <span id="turmeric100-count">0</span>
+                        <button onclick="changeCount('turmeric100', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Turmeric 500g (<span class="price-display" data-id="turmeric500">LKR 20</span>)</span>
+                    <div>
+                        <button onclick="changeCount('turmeric500', -1)">−</button>
+                        <span id="turmeric500-count">0</span>
+                        <button onclick="changeCount('turmeric500', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Turmeric 1kg (<span class="price-display" data-id="turmeric1kg">LKR 35</span>)</span>
+                    <div>
+                        <button onclick="changeCount('turmeric1kg', -1)">−</button>
+                        <span id="turmeric1kg-count">0</span>
+                        <button onclick="changeCount('turmeric1kg', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chili Powder Category -->
+            <div class="category">
+                <h2>Chili Powder</h2>
+                <div class="item">
+                    <span>Chili powder 50g (<span class="price-display" data-id="chili50">LKR 6</span>)</span>
+                    <div>
+                        <button onclick="changeCount('chili50', -1)">−</button>
+                        <span id="chili50-count">0</span>
+                        <button onclick="changeCount('chili50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili powder 100g (<span class="price-display" data-id="chili100">LKR 10</span>)</span>
+                    <div>
+                        <button onclick="changeCount('chili100', -1)">−</button>
+                        <span id="chili100-count">0</span>
+                        <button onclick="changeCount('chili100', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili powder 500g (<span class="price-display" data-id="chili500">LKR 25</span>)</span>
+                    <div>
+                        <button onclick="changeCount('chili500', -1)">−</button>
+                        <span id="chili500-count">0</span>
+                        <button onclick="changeCount('chili500', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili powder 1kg (<span class="price-display" data-id="chili1kg">LKR 40</span>)</span>
+                    <div>
+                        <button onclick="changeCount('chili1kg', -1)">−</button>
+                        <span id="chili1kg-count">0</span>
+                        <button onclick="changeCount('chili1kg', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chili Flakes Category -->
+            <div class="category">
+                <h2>Chili Flakes</h2>
+                <div class="item">
+                    <span>Chili flakes 50g (<span class="price-display" data-id="flakes50">LKR 7</span>)</span>
+                    <div>
+                        <button onclick="changeCount('flakes50', -1)">−</button>
+                        <span id="flakes50-count">0</span>
+                        <button onclick="changeCount('flakes50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili flakes 100g (<span class="price-display" data-id="flakes100">LKR 12</span>)</span>
+                    <div>
+                        <button onclick="changeCount('flakes100', -1)">−</button>
+                        <span id="flakes100-count">0</span>
+                        <button onclick="changeCount('flakes100', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili flakes 500g (<span class="price-display" data-id="flakes500">LKR 30</span>)</span>
+                    <div>
+                        <button onclick="changeCount('flakes500', -1)">−</button>
+                        <span id="flakes500-count">0</span>
+                        <button onclick="changeCount('flakes500', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Chili flakes 1kg (<span class="price-display" data-id="flakes1kg">LKR 50</span>)</span>
+                    <div>
+                        <button onclick="changeCount('flakes1kg', -1)">−</button>
+                        <span id="flakes1kg-count">0</span>
+                        <button onclick="changeCount('flakes1kg', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Black Pepper Powder Category -->
+            <div class="category">
+                <h2>Black Pepper Powder</h2>
+                <div class="item">
+                    <span>Black Pepper Powder 25g (<span class="price-display" data-id="pepper25">LKR 4</span>)</span>
+                    <div>
+                        <button onclick="changeCount('pepper25', -1)">−</button>
+                        <span id="pepper25-count">0</span>
+                        <button onclick="changeCount('pepper25', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Black Pepper Powder 50g (<span class="price-display" data-id="pepper50">LKR 7</span>)</span>
+                    <div>
+                        <button onclick="changeCount('pepper50', -1)">−</button>
+                        <span id="pepper50-count">0</span>
+                        <button onclick="changeCount('pepper50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Black Pepper Powder 500g (<span class="price-display" data-id="pepper500">LKR 20</span>)</span>
+                    <div>
+                        <button onclick="changeCount('pepper500', -1)">−</button>
+                        <span id="pepper500-count">0</span>
+                        <button onclick="changeCount('pepper500', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Black Pepper Powder 1kg (<span class="price-display" data-id="pepper1kg">LKR 35</span>)</span>
+                    <div>
+                        <button onclick="changeCount('pepper1kg', -1)">−</button>
+                        <span id="pepper1kg-count">0</span>
+                        <button onclick="changeCount('pepper1kg', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curry Powder Category -->
+            <div class="category">
+                <h2>Curry Powder</h2>
+                <div class="item">
+                    <span>Curry Powder 50g (<span class="price-display" data-id="curry50">LKR 6</span>)</span>
+                    <div>
+                        <button onclick="changeCount('curry50', -1)">−</button>
+                        <span id="curry50-count">0</span>
+                        <button onclick="changeCount('curry50', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Curry Powder 100g (<span class="price-display" data-id="curry100">LKR 10</span>)</span>
+                    <div>
+                        <button onclick="changeCount('curry100', -1)">−</button>
+                        <span id="curry100-count">0</span>
+                        <button onclick="changeCount('curry100', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Curry Powder 500g (<span class="price-display" data-id="curry500">LKR 25</span>)</span>
+                    <div>
+                        <button onclick="changeCount('curry500', -1)">−</button>
+                        <span id="curry500-count">0</span>
+                        <button onclick="changeCount('curry500', 1)">+</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <span>Curry Powder 1kg (<span class="price-display" data-id="curry1kg">LKR 40</span>)</span>
+                    <div>
+                        <button onclick="changeCount('curry1kg', -1)">−</button>
+                        <span id="curry1kg-count">0</span>
+                        <button onclick="changeCount('curry1kg', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Receipt Button -->
+            <button class="generate-btn" onclick="generateReceipt()">Generate Receipt</button>
+
+            <!-- Receipt Container -->
+            <div id="receipt-container" class="receipt-container">
+                <div id="receipt-original" class="receipt">
+                    <h2>PLATINUM SPICES</h2>
+                    <div class="business-info">
+                        <p>Lindapitiya Ranawatta Narammala</p>
+                        <p>+94 075 123 122 / +94 071 190 1973</p>
+                        <p id="receipt-date"></p>
+                    </div>
+                    <div class="receipt-meta">
+                        <span id="receipt-number"></span>
+                    </div>
+                    <div class="customer-info">
+                        <p><strong>Customer:</strong> <span id="receipt-customer-name"></span></p>
+                        <p><strong>Address:</strong> <span id="receipt-customer-address"></span></p>
+                    </div>
+                    <div id="receipt-items" class="receipt-items"></div>
+                    <div class="total">Total: <span id="total-price">LKR 0</span></div>
+                    <div class="terms">
+                        <p>The buyer agrees to pay the full amount within 14 days if purchased on credit.</p>
+                    </div>
+                    <div class="signature-area">
+                        <div class="signature">Sales Agent</div>
+                        <div class="signature">Buyer</div>
+                    </div>
+                </div>
+
+                <div id="receipt-copy" class="receipt">
+                    <h2>PLATINUM SPICES</h2>
+                    <div class="business-info">
+                        <p>Lindapitiya Ranawatta Narammala</p>
+                        <p>+94 075 123 122 / +94 071 190 1973</p>
+                        <p id="receipt-date-copy"></p>
+                    </div>
+                    <div class="receipt-meta">
+                        <span id="receipt-number-copy"></span>
+                    </div>
+                    <div class="customer-info">
+                        <p><strong>Customer:</strong> <span id="receipt-customer-name-copy"></span></p>
+                        <p><strong>Address:</strong> <span id="receipt-customer-address-copy"></span></p>
+                    </div>
+                    <div id="receipt-items-copy" class="receipt-items"></div>
+                    <div class="total">Total: <span id="total-price-copy">LKR 0</span></div>
+                    <div class="terms">
+                        <p>The buyer agrees to pay the full amount within 14 days if purchased on credit. </p>
+                    </div>
+                </div>
+
+                <button class="save-btn" onclick="saveReceiptAsImage()">Save Receipt as Image</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Page -->
+    <div id="pricing" class="page">
+        <div class="container">
+            <h1>Pricing Management</h1>
+            
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price (LKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Turmeric -->
+                    <tr>
+                        <td>Turmeric 50g</td>
+                        <td><input type="number" class="price-input" id="edit-turmeric50" value="5"></td>
+                    </tr>
+                    <tr>
+                        <td>Turmeric 100g</td>
+                        <td><input type="number" class="price-input" id="edit-turmeric100" value="8"></td>
+                    </tr>
+                    <tr>
+                        <td>Turmeric 500g</td>
+                        <td><input type="number" class="price-input" id="edit-turmeric500" value="20"></td>
+                    </tr>
+                    <tr>
+                        <td>Turmeric 1kg</td>
+                        <td><input type="number" class="price-input" id="edit-turmeric1kg" value="35"></td>
+                    </tr>
+                    
+                    <!-- Chili Powder -->
+                    <tr>
+                        <td>Chili powder 50g</td>
+                        <td><input type="number" class="price-input" id="edit-chili50" value="6"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili powder 100g</td>
+                        <td><input type="number" class="price-input" id="edit-chili100" value="10"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili powder 500g</td>
+                        <td><input type="number" class="price-input" id="edit-chili500" value="25"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili powder 1kg</td>
+                        <td><input type="number" class="price-input" id="edit-chili1kg" value="40"></td>
+                    </tr>
+                    
+                    <!-- Chili Flakes -->
+                    <tr>
+                        <td>Chili flakes 50g</td>
+                        <td><input type="number" class="price-input" id="edit-flakes50" value="7"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili flakes 100g</td>
+                        <td><input type="number" class="price-input" id="edit-flakes100" value="12"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili flakes 500g</td>
+                        <td><input type="number" class="price-input" id="edit-flakes500" value="30"></td>
+                    </tr>
+                    <tr>
+                        <td>Chili flakes 1kg</td>
+                        <td><input type="number" class="price-input" id="edit-flakes1kg" value="50"></td>
+                    </tr>
+                    
+                    <!-- Black Pepper Powder -->
+                    <tr>
+                        <td>Black Pepper Powder 25g</td>
+                        <td><input type="number" class="price-input" id="edit-pepper25" value="4"></td>
+                    </tr>
+                    <tr>
+                        <td>Black Pepper Powder 50g</td>
+                        <td><input type="number" class="price-input" id="edit-pepper50" value="7"></td>
+                    </tr>
+                    <tr>
+                        <td>Black Pepper Powder 500g</td>
+                        <td><input type="number" class="price-input" id="edit-pepper500" value="20"></td>
+                    </tr>
+                    <tr>
+                        <td>Black Pepper Powder 1kg</td>
+                        <td><input type="number" class="price-input" id="edit-pepper1kg" value="35"></td>
+                    </tr>
+                    
+                    <!-- Curry Powder -->
+                    <tr>
+                        <td>Curry Powder 50g</td>
+                        <td><input type="number" class="price-input" id="edit-curry50" value="6"></td>
+                    </tr>
+                    <tr>
+                        <td>Curry Powder 100g</td>
+                        <td><input type="number" class="price-input" id="edit-curry100" value="10"></td>
+                    </tr>
+                    <tr>
+                        <td>Curry Powder 500g</td>
+                        <td><input type="number" class="price-input" id="edit-curry500" value="25"></td>
+                    </tr>
+                    <tr>
+                        <td>Curry Powder 1kg</td>
+                        <td><input type="number" class="price-input" id="edit-curry1kg" value="40"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button class="update-btn" onclick="updatePrices()">Update Prices</button>
+        </div>
+    </div>
+
+    <!-- html2canvas library for saving as image -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <script>
+        // Store item prices
+        let prices = {
+            turmeric50: 5,
+            turmeric100: 8,
+            turmeric500: 20,
+            turmeric1kg: 35,
+            chili50: 6,
+            chili100: 10,
+            chili500: 25,
+            chili1kg: 40,
+            flakes50: 7,
+            flakes100: 12,
+            flakes500: 30,
+            flakes1kg: 50,
+            pepper25: 4,
+            pepper50: 7,
+            pepper500: 20,
+            pepper1kg: 35,
+            curry50: 6,
+            curry100: 10,
+            curry500: 25,
+            curry1kg: 40,
+        };
+
+        // Receipt counter starting from 10
+        let receiptCounter = 10;
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav link states
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Update displayed prices
+        function updateDisplayedPrices() {
+            for (const [id, price] of Object.entries(prices)) {
+                const elements = document.querySelectorAll(`.price-display[data-id="${id}"]`);
+                elements.forEach(el => {
+                    el.textContent = `LKR ${price}`;
+                });
+                
+                const input = document.getElementById(`edit-${id}`);
+                if (input) {
+                    input.value = price;
+                }
+            }
+        }
+
+        // Update prices from form
+        function updatePrices() {
+            for (const id in prices) {
+                const input = document.getElementById(`edit-${id}`);
+                if (input) {
+                    prices[id] = Number(input.value);
+                }
+            }
+            updateDisplayedPrices();
+            alert('Prices updated successfully!');
+        }
+
+        // Format date for receipt
+        function formatDate(date) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Receipt Generator Functions
+        function changeCount(item, change) {
+            const countElement = document.getElementById(`${item}-count`);
+            let currentCount = parseInt(countElement.textContent);
+            currentCount += change;
+            if (currentCount < 0) currentCount = 0;
+            countElement.textContent = currentCount;
+        }
+
+        function generateReceipt() {
+            const customerName = document.getElementById('customer-name').value;
+            const customerAddress = document.getElementById('customer-address').value;
+            
+            if (!customerName || !customerAddress) {
+                alert('Please enter customer name and address');
+                return;
+            }
+
+            let total = 0;
+            let receiptContent = '';
+            
+            for (let item in prices) {
+                const count = parseInt(document.getElementById(`${item}-count`).textContent);
+                if (count > 0) {
+                    const itemPrice = prices[item];
+                    total += itemPrice * count;
+                    
+                    // Format the item name for display
+                    let displayName = item
+                        .replace(/([0-9])([a-z])/g, '$1 $2') // Add space between number and unit
+                        .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+                        .replace(/^./, str => str.toUpperCase()); // Capitalize first letter
+                    
+                    receiptContent += `<p>${displayName}: LKR ${itemPrice} x ${count} = LKR ${(itemPrice * count).toFixed(2)}</p>`;
+                }
+            }
+            
+            // Set receipt content
+            document.getElementById('receipt-items').innerHTML = receiptContent;
+            document.getElementById('receipt-items-copy').innerHTML = receiptContent;
+            
+            // Set customer info
+            document.getElementById('receipt-customer-name').textContent = customerName;
+            document.getElementById('receipt-customer-address').textContent = customerAddress;
+            document.getElementById('receipt-customer-name-copy').textContent = customerName;
+            document.getElementById('receipt-customer-address-copy').textContent = customerAddress;
+            
+            // Set totals
+            document.getElementById('total-price').textContent = `LKR ${total.toFixed(2)}`;
+            document.getElementById('total-price-copy').textContent = `LKR ${total.toFixed(2)}`;
+            
+            // Set date and receipt number
+            const now = new Date();
+            document.getElementById('receipt-date').textContent = formatDate(now);
+            document.getElementById('receipt-date-copy').textContent = formatDate(now);
+            document.getElementById('receipt-number').textContent = `Receipt #${receiptCounter}`;
+            document.getElementById('receipt-number-copy').textContent = `Receipt #${receiptCounter}`;
+            
+            // Increment receipt counter for next time
+            receiptCounter++;
+            
+            // Show receipt container
+            document.getElementById('receipt-container').style.display = 'block';
+        }
+
+        // Save receipt as image
+        function saveReceiptAsImage() {
+            // Create a container for both receipts
+            const container = document.createElement('div');
+            container.style.width = '2in';
+            container.style.padding = '10px';
+            container.style.backgroundColor = 'white';
+            
+            // Clone the receipts
+            const original = document.getElementById('receipt-original').cloneNode(true);
+            const copy = document.getElementById('receipt-copy').cloneNode(true);
+            
+            // Add some spacing between receipts
+            copy.style.marginTop = '20px';
+            
+            // Add to container
+            container.appendChild(original);
+            container.appendChild(copy);
+            
+            // Temporarily add to body
+            document.body.appendChild(container);
+            
+            // Use html2canvas with precise dimensions
+            html2canvas(container, {
+                width: 2 * 96, // 2 inches at 96 DPI
+                height: container.offsetHeight,
+                scale: 2, // Higher quality
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                scrollX: 0,
+                scrollY: 0
+            }).then(canvas => {
+                // Convert canvas to image
+                const image = canvas.toDataURL('image/png');
+                
+                // Create temporary link
+                const link = document.createElement('a');
+                link.download = `platinum-spices-receipt-${receiptCounter-1}.png`;
+                link.href = image;
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Remove temporary container
+                document.body.removeChild(container);
+            }).catch(err => {
+                console.error('Error generating image:', err);
+                document.body.removeChild(container);
+            });
+        }
+
+        // Initialize displayed prices
+        window.onload = function() {
+            updateDisplayedPrices();
+        };
+    </script>
+</body>
+</html>
